@@ -11,15 +11,9 @@ jobs:
     timeout-minutes: 3
     steps:
       - uses: actions/checkout@v2.3.1
-        with:
-          fetch-depth: 0
-      - name: Set up Ruby 2.6
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: 2.6
       - name: Execute gir-pr-release (release -> master)
         env:
           GIT_PR_RELEASE_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gem install git-pr-release
-          git-pr-release || echo "Done."
+          gh pr create -B ${{ steps.check_pr.outputs.base_branch }} -t ${{ steps.check_pr.outputs.pr_title }} -b ""
+
