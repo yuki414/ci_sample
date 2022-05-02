@@ -4,7 +4,7 @@
   "description": "This repository aims to try CircleCI and Github Actions for learning.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest"
   },
   "repository": {
     "type": "git",
@@ -18,7 +18,12 @@
   },
   "homepage": "https://github.com/yuki414/ci_sample#readme",
   "dependencies": {
-    "ts-node": "^10.7.0",
+    "ts-node": "^10.7.0"
+  },
+  "devDependencies": {
+    "@types/jest": "^27.4.1",
+    "jest": "^27.5.1",
+    "ts-jest": "^27.1.4",
     "typescript": "^4.6.4"
   }
 }
