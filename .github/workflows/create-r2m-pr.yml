@@ -8,10 +8,18 @@ on:
 jobs:
   r2m-pr:
     runs-on: ubuntu-latest
-    env:
-      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    timeout-minutes: 3
     steps:
       - uses: actions/checkout@v2.3.1
-      - name: Execute gir-pr-release (release -> master)
+        with:
+          fetch-depth: 0
+      - name: Set up Ruby 2.7
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.7
+      - name: Execute gir-pr-release (release -> main)
+        env:
+          GIT_PR_RELEASE_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh pr create -B main -t release -b ""
+          gem install git-pr-release
+          git-pr-release || echo "Done."
