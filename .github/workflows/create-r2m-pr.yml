@@ -1,30 +1,23 @@
-name: Create a pull request for release.
-
+name: r2m-pr
 on:
   push:
-    branches: [ release, develop ]
-
+    branches:
+      - release
 jobs:
-  create-release-pr:
+  r2m-pr:
     runs-on: ubuntu-latest
-
-    env:
-      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
+    timeout-minutes: 3
     steps:
-      - uses: actions/checkout@v2
-
-      # リリース用PRが既に存在するかどうかをチェック
-      - name: Check if pr exists
-        id: check_pr
+      - uses: actions/checkout@v2.3.1
+        with:
+          fetch-depth: 0
+      - name: Set up Ruby 2.7.5
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.7.5
+      - name: Execute gir-pr-release (release -> master)
+        env:
+          GIT_PR_RELEASE_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          pr_title=${{ (github.ref == 'refs/heads/release' && 'release') || 'Develop' }}
-          base_branch=${{ (github.ref == 'refs/heads/release' && 'main') || 'release' }}
-          echo "::set-output name=count::$(gh pr list -S ${pr_title}' in:title' -B $base_branch | wc -l)"
-          echo "::set-output name=pr_title::$pr_title"
-          echo "::set-output name=base_branch::$base_branch"
-      # リリース用PRを作成
-      - name: Create release pr
-        if: ${{ steps.check_pr.outputs.count == 0 }}
-        run: |
-          gh pr create -B ${{ steps.check_pr.outputs.base_branch }} -t ${{ steps.check_pr.outputs.pr_title }} -b ""
+          gem install git-pr-release
+          git-pr-release || echo "Done."
